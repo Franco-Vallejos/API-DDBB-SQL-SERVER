@@ -11,23 +11,41 @@ go
 use calendar
 go
 
-create table monthTurn(
+create table january(
 	dia int primary key check(dia >= 1 and dia <=31),
 	TT varchar(40),
-	TM varchar(40)
+	TM varchar(40),
+	constraint monthTurn_FK_TT foreign key (TT)
+	references staff(namesurname),
+	constraint monthTurn_FK_TM foreign key (TM)
+	references staff(namesurname)
 )
 go
 
-insert into monthTurn (dia, TM, TT) values (1, null, null)
-insert into monthTurn (dia, TM, TT) values (2, 'Vallejos Franco', null)
-insert into monthTurn (dia, TM, TT) values (3, null, null)
-insert into monthTurn (dia, TM, TT) values (4, 'Vallejos Franco', null)
-insert into monthTurn (dia, TM, TT) values (5, null, 'Vallejos Franco')
-insert into monthTurn (dia, TM, TT) values (6, null, null)
-insert into monthTurn (dia, TM, TT) values (7, 'Vallejos Franco', null)
-insert into monthTurn (dia, TM, TT) values (8, null, 'Vallejos Franco')
-insert into monthTurn (dia, TM, TT) values (9, null, null)
-insert into monthTurn (dia, TM, TT) values (10, null, 'Vallejos Franco')
+drop table monthTurn_January
+
+create table staff(
+	namesurname varchar(40) primary key
+)
+
+drop table staff
+
+insert into staff (namesurname) values ('Vallejos Franco')
+insert into staff (namesurname) values ('Roldan Gonza')
+insert into staff (namesurname) values ('Sloboyen Carlos')
+
+drop table monthTurn
+
+insert into january (dia, TM, TT) values (1, 'Roldan Gonza', 'Sloboyen Carlos')
+insert into january (dia, TM, TT) values (2, 'Vallejos Franco', 'Sloboyen Carlos')
+insert into january (dia, TM, TT) values (3, 'Sloboyen Carlos', 'Roldan Gonza')
+insert into january (dia, TM, TT) values (4, 'Vallejos Franco', 'Roldan Gonza')
+insert into january (dia, TM, TT) values (5, 'Sloboyen Carlos', 'Vallejos Franco')
+insert into january (dia, TM, TT) values (6, 'Sloboyen Carlos', 'Roldan Gonza')
+insert into january (dia, TM, TT) values (7, 'Vallejos Franco', 'Sloboyen Carlos')
+insert into january (dia, TM, TT) values (8, 'Roldan Gonza', 'Vallejos Franco')
+insert into january (dia, TM, TT) values (9, 'Sloboyen Carlos', 'Roldan Gonza')
+insert into january (dia, TM, TT) values (10, 'Roldan Gonza', 'Vallejos Franco')
 
 go
-select * from monthTurn
+select * from january
