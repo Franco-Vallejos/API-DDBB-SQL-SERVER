@@ -1,11 +1,12 @@
 import sql from "mssql"
+import config from'../config.js'
 
 const dbSettings = {
     type: 'default',
-    user: 'calendar',
-    password: 'sqlcalendar',
-    server: 'localhost',
-    database: 'calendar',
+    user: config.user,
+    password: config.password,
+    server: config.server,
+    database: config.database,
     encrypt: true,
     trustServerCertificate: true,
 }

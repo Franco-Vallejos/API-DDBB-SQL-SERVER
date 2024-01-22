@@ -2,9 +2,18 @@ import { getConnection, sql} from "../database/connection.js";
 
 export const getProducts = async (req, res) => {
     try{
+        const {dni} = req.query;
+        const {month} = req.params;
         const pool = await getConnection();
-        const result = await pool.request()
-        .query("select * from monthTurn");
+        let result;
+        if(dni){
+            result = await pool.request()
+            .query("exec [api].showPersonalCalendar N'" + month + "', "+ dni +";");    
+        }else{
+            result = await pool.request()
+            .query("exec [api].showCalendar N'" + month + "' ;");
+
+        }
         res.json(result.recordsets);
     }catch(error){
         res.status(500);

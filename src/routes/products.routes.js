@@ -3,15 +3,15 @@ import { getProducts, createNewProduct} from "../controllers/products.controller
 
 const router = Router();
 
-router.get('/products', getProducts);
+router.get('/api/query/:month', getProducts);
 
-router.post('/products', createNewProduct);
+router.post('/api/query', createNewProduct);
 
-router.get('/products');
+router.get('/api/query');
 
-router.delete('/products');
+router.delete('/api/query');
 
-router.put('/products');
+router.put('/api/query');
 
 export default router;
 
