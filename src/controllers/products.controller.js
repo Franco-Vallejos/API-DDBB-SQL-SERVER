@@ -1,6 +1,6 @@
 import { getConnection, sql} from "../database/connection.js";
 
-export const getProducts = async (req, res) => {
+export const getCalendar = async (req, res) => {
     try{
         const {dni} = req.query;
         const {month} = req.params;
@@ -21,6 +21,20 @@ export const getProducts = async (req, res) => {
         return;
     }
 };
+
+export const getPersonal = async (req, res) => {
+    try{
+        const pool = await getConnection();
+        const result = await pool.request()
+                .query('select * from [api].showPersonal');
+        res.json(result.recordsets);
+    }catch(error){
+        res.status(450);
+        res.send(error.message);
+        return;
+    }
+
+}
 
 export const createNewProduct = async (req, res) => {
     const {dia, tm, tt} = req.body;

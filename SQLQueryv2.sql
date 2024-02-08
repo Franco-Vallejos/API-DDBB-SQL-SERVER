@@ -6,18 +6,25 @@ go
 create schema [months]
 go
 create schema [api]
+go
+
+create schema [dbo]
+go
 -- use master drop database calendar
 
 create login calendar
 with password = 'sqlcalendar'
 go
-ALTER LOGIN calendar WITH DEFAULT_DATABASE = calendar;
-go
 create user calendar for login calendar
+go
+ALTER LOGIN calendar WITH DEFAULT_DATABASE = calendar;
 go
 ALTER USER calendar WITH LOGIN = calendar;
 go
 Grant execute on schema::[api] to calendar
+go
+Grant select on schema::[api] to calendar
+go
 --drop login calendar
 --drop user calendar
 
@@ -145,7 +152,7 @@ create table [months].december(
 	[26] char(3), [27] char(3),	[28] char(3), [29] char(3), [30] char(3), [31] char(3)
 )
 go
-create table staff(
+create table [dbo].personal(
 	namesurname varchar(40),
 	dni int check (dni < 99999999 and dni>10000000) primary key
 )
@@ -153,43 +160,44 @@ create table staff(
 -------------------------------CONSTRAINT-------------------------------
 
 alter table [months].january add constraint january_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 alter table [months].february add constraint february_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 alter table [months].march add constraint march_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 alter table [months].april add constraint april_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 alter table [months].may add constraint may_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 alter table [months].june add constraint june_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 alter table [months].july add constraint july_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 alter table [months].august add constraint august_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 alter table [months].september add constraint september_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 alter table [months].november add constraint november_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 alter table [months].december add constraint december_FK foreign key (dni)
-references staff(dni)
+references personal(dni)
 
 -------------------------------LOTE DE PRUEBA-------------------------------
 
-insert into staff (namesurname, dni) values ('Vallejos Franco', 43386520)
-insert into staff (namesurname, dni) values ('Roldan Gonza', 50000000)
-insert into staff (namesurname, dni) values ('Sloboyen Carlos', 60000000)
+insert into [dbo].personal (namesurname, dni) values ('Vallejos Franco', 43386520)
+insert into [dbo].personal (namesurname, dni) values ('Roldan Gonza', 50000000)
+insert into [dbo].personal (namesurname, dni) values ('Sloboyen Carlos', 60000000)
+insert into [dbo].personal (namesurname, dni) values ('Quatrano Marcos', 70000000)
 go
 
 insert into months.january (dni, [1], [2], [4], [6], [8], [10]) values (43386520, 'TTT', 'TTT', 'TTM', 'TTT', 'TTM', 'TTM')
@@ -197,9 +205,22 @@ insert into months.january (dni, [1], [2], [4], [6], [8], [10]) values (60000000
 insert into months.january (dni, [2], [3], [5], [7], [9]) values (50000000, 'TTT', 'TTT', 'TTM', 'TTT', 'TTM')
 go
 
-select * from months.january
 
+insert into months.february(dni, [1], [2], [4], [6], [8], [10]) values (50000000, 'TTT', 'TTT', 'TTM', 'TTT', 'TTM', 'TTM')
+insert into months.february (dni, [1], [2], [4], [6], [8], [10]) values (43386520, 'TTM', 'TTM', 'TTT', 'TTM', 'TTT', 'TTT')
+insert into months.february (dni, [2], [3], [5], [7], [9]) values (60000000, 'TTT', 'TTT', 'TTM', 'TTT', 'TTM')
+insert into months.february(dni, [2], [3], [5]) values (70000000, 'TTM', 'TTM', 'TTM')
+go
 -------------------------------STORE PROCEDURE-------------------------------
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'showPersonalCalendar') AND type in (N'P', N'PC'))
+  DROP PROCEDURE [api].showPersonalCalendar
+GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'showCalendar') AND type in (N'P', N'PC'))
+  DROP PROCEDURE [api].showCalendar
+GO
+
 
 create or alter procedure [api].showPersonalCalendar (@months varchar(10), @tech char(8))
 WITH EXECUTE AS OWNER 
@@ -219,3 +240,12 @@ begin
     set @SQLDinamic = N'select * from [months].' + @months;
     exec sys.[sp_executesql] @SQLDinamic;
 end
+go
+
+-------------------------------VIEW-------------------------------
+
+create or alter view [api].showPersonal 
+with SCHEMABINDING 
+AS
+select dni, namesurname from [dbo].[personal]
+go
